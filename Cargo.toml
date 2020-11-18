@@ -1,0 +1,7 @@
+[package]
+name = "auto-delete-path"
+version = "0.1.0"
+authors = ["Thanasis Katsios <thkatsios@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "A simple PathBuf wrapper that gets deleted when it goes out of scope"
+edition = "2018"
