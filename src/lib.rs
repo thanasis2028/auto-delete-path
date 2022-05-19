@@ -14,10 +14,7 @@
 //! See [AutoDeletePath](struct.AutoDeletePath.html) and [include_to_auto_delete_path](macro.include_to_auto_delete_path.html)
 //! for more examples.
 
-use std::{
-    path::{Path, PathBuf},
-    sync::atomic::{AtomicU16, Ordering},
-};
+use std::path::{Path, PathBuf};
 
 /// Macro for including a source file, and writing it to a new `AutoDeletePath::temp`.
 ///
@@ -53,6 +50,7 @@ macro_rules! include_to_auto_delete_path {
 /// This works even if the program panics.
 ///
 /// Useful for creating temporary files that you want to be deleted automatically.
+#[derive(Debug)]
 pub struct AutoDeletePath {
     path: PathBuf,
 }
@@ -69,6 +67,7 @@ impl AutoDeletePath {
     /// let mut temp_path_clone = std::path::PathBuf::new();
     /// {
     ///     let temp_path = auto_delete_path::AutoDeletePath::temp();
+    ///
     ///     temp_path_clone = temp_path.as_ref().to_owned();
     ///     assert!(!temp_path_clone.exists());
     ///     std::fs::write(&temp_path, "spam").unwrap();
@@ -112,8 +111,6 @@ impl Drop for AutoDeletePath {
     }
 }
 
-static PATH_COUNT: AtomicU16 = AtomicU16::new(1);
-
 /// Creates a random path at the default temp directory (usually /tmp).
 fn create_temp_path() -> PathBuf {
     create_temp_path_at_directory(std::env::temp_dir())
@@ -124,6 +121,6 @@ fn create_temp_path_at_directory<P: AsRef<Path>>(directory: P) -> PathBuf {
     PathBuf::from(format!(
         "{}/rustytemp-{}",
         directory.as_ref().display(),
-        PATH_COUNT.fetch_add(1, Ordering::Relaxed)
+        fastrand::u64(..)
     ))
 }
